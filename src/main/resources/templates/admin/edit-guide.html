@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{fragments :: head('Edit Guide')}"/>
+</head>
+<body>
+<th:block th:replace="~{fragments :: navbar}"/>
+
+<div class="page-header">
+    <div class="container">
+        <p><a href="/admin/guides" style="color:rgba(255,255,255,.7);">← Back to Pending Guides</a></p>
+        <h1>Edit Guide</h1>
+    </div>
+</div>
+
+<section class="section" style="padding-top:2rem;">
+    <div class="container" style="max-width:700px;">
+        <div class="form-card" style="max-width:100%;">
+            <h3 style="margin-bottom:1.5rem;">Edit Guide Details</h3>
+
+            <form th:action="@{/admin/guide/update}" th:object="${guide}" method="post">
+<!--                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>-->
+                <input type="hidden" th:field="*{id}"/>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input type="text" th:field="*{name}" required/>
+                    </div>
+                    <div class="form-group">
+                        <label>City</label>
+                        <input type="text" th:field="*{city}" required/>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Language</label>
+                        <input type="text" th:field="*{language}"/>
+                    </div>
+                    <div class="form-group">
+                        <label>Experience (years)</label>
+                        <input type="number" th:field="*{experience}" min="0"/>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Price per Day (₹)</label>
+                        <input type="number" th:field="*{price}" min="0"/>
+                    </div>
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select th:field="*{status}">
+                            <option value="PENDING">Pending</option>
+                            <option value="APPROVED">Approved</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Image URL</label>
+                    <input type="text" th:field="*{imageUrl}" placeholder="https://…"/>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea th:field="*{description}" rows="4"></textarea>
+                </div>
+
+                <div style="display:flex;gap:.75rem;">
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <a href="/admin/guides" class="btn btn-outline">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

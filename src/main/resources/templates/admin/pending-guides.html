@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{fragments :: head('Admin — Pending Guides')}"/>
+</head>
+<body>
+<th:block th:replace="~{fragments :: navbar}"/>
+
+<div style="display:flex;min-height:calc(100vh - 68px);">
+    <aside class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-label">Admin Panel</div>
+            <ul class="sidebar-nav">
+                <li><a href="/admin/guides"    class="active">✅ Pending Guides</a></li>
+                <li><a href="/admin/bookings">📋 All Bookings</a></li>
+                <li><a href="/admin/dashboard">📊 Dashboard</a></li>
+                <li><a href="/">🏠 Home</a></li>
+            </ul>
+        </div>
+    </aside>
+
+    <main class="dashboard-main">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem;flex-wrap:wrap;gap:1rem;">
+            <div>
+                <h2 style="margin:0;">Pending Guide Approvals</h2>
+                <p class="text-muted">Review and approve new guide registrations</p>
+            </div>
+            <span class="badge badge-pending" style="font-size:.85rem;padding:.4rem 1rem;"
+                  th:text="${guides.size()} + ' Pending'">0 Pending</span>
+        </div>
+
+        <!-- Empty state -->
+        <div th:if="${guides.empty}"
+             style="text-align:center;padding:3rem;background:var(--white);
+                border-radius:var(--radius-lg);border:1px solid var(--border);">
+            <div style="font-size:2.5rem;margin-bottom:.5rem;">🎉</div>
+            <h3>All caught up!</h3>
+            <p class="text-muted">No pending guide approvals.</p>
+        </div>
+
+        <div class="table-wrap" th:unless="${guides.empty}">
+            <table>
+                <thead>
+                <tr>
+                    <th>Name</th><th>City</th><th>Language</th>
+                    <th>Experience</th><th>Price/Day</th><th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="guide : ${guides}">
+                    <td style="font-weight:600;" th:text="${guide.name}">Name</td>
+                    <td th:text="${guide.city}">City</td>
+                    <td th:text="${guide.language}">Lang</td>
+                    <td th:text="${guide.experience} + ' yrs'">5 yrs</td>
+                    <td>₹<span th:text="${guide.price}">0</span></td>
+                    <td>
+                        <div style="display:flex;gap:.5rem;flex-wrap:wrap;">
+                            <a th:href="@{/admin/approve/{id}(id=${guide.id})}"
+                               class="btn btn-primary btn-sm">✓ Approve</a>
+                            <a th:href="@{/admin/guide/edit/{id}(id=${guide.id})}"
+                               class="btn btn-outline btn-sm">✏️ Edit</a>
+                            <a th:href="@{/admin/guide/delete/{id}(id=${guide.id})}"
+                               class="btn btn-danger btn-sm"
+                               data-confirm="Delete this guide application?">🗑 Delete</a>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+</div>
+
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{fragments :: head('Chat')}"/>
+    <style>
+        .chat-wrap {
+            max-width: 720px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        .chat-header {
+            background: var(--primary-dark);
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+            padding: 1.2rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .chat-header h3 { color: #fff; margin: 0; font-size: 1rem; }
+        .chat-header p  { color: rgba(255,255,255,.6); font-size: .82rem; margin: 0; }
+        .chat-avatar {
+            width: 42px; height: 42px; border-radius: 50%;
+            background: rgba(255,255,255,.15);
+            display: flex; align-items: center;
+            justify-content: center; font-size: 1.3rem; flex-shrink: 0;
+        }
+        .chat-messages {
+            background: var(--ivory-dark);
+            border-left: 1px solid var(--border);
+            border-right: 1px solid var(--border);
+            padding: 1.5rem;
+            min-height: 420px;
+            max-height: 520px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: .75rem;
+        }
+        .msg-bubble {
+            max-width: 72%;
+            padding: .75rem 1rem;
+            border-radius: 18px;
+            font-size: .92rem;
+            line-height: 1.5;
+        }
+        .msg-mine {
+            align-self: flex-end;
+            background: var(--primary);
+            color: #fff;
+            border-bottom-right-radius: 4px;
+        }
+        .msg-theirs {
+            align-self: flex-start;
+            background: #fff;
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-bottom-left-radius: 4px;
+        }
+        .msg-meta { font-size: .72rem; margin-top: .3rem; opacity: .7; }
+        .msg-mine  .msg-meta { text-align: right; color: rgba(255,255,255,.75); }
+        .msg-theirs .msg-meta { color: var(--text-muted); }
+        .chat-input-bar {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-top: none;
+            border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+            padding: 1rem 1.5rem;
+            display: flex;
+            gap: .75rem;
+            align-items: flex-end;
+        }
+        .chat-input-bar textarea {
+            flex: 1; min-height: 44px; max-height: 120px;
+            resize: none; padding: .65rem 1rem;
+            font-size: .93rem; border-radius: 22px;
+            border: 1.5px solid var(--border);
+            background: var(--ivory);
+            font-family: 'DM Sans', sans-serif;
+            line-height: 1.4;
+            outline: none;
+            transition: border-color var(--transition);
+        }
+        .chat-input-bar textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(55,48,163,.1);
+        }
+        .empty-chat {
+            flex: 1; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            color: var(--text-muted); gap: .5rem;
+            padding: 3rem 0;
+        }
+    </style>
+</head>
+<body>
+<th:block th:replace="~{fragments :: navbar}"/>
+
+<div class="chat-wrap">
+
+    <!-- Back link — goes to my-bookings for tourist, guide dashboard for guide -->
+    <div style="margin-bottom:1rem;display:flex;gap:1rem;align-items:center;flex-wrap:wrap;">
+        <a href="/my-bookings"      style="color:var(--text-muted);font-size:.9rem;">← My Bookings</a>
+        <span style="color:var(--border);">|</span>
+        <a href="/guide/dashboard"  style="color:var(--text-muted);font-size:.9rem;">← Guide Dashboard</a>
+    </div>
+
+    <!-- Chat header -->
+    <div class="chat-header">
+        <div class="chat-avatar">🧭</div>
+        <div>
+            <h3 th:text="'Chat — ' + ${booking.guide.name}">Chat</h3>
+            <p>
+                Booking for
+                <span th:text="${booking.bookingDate}"></span>
+                &nbsp;·&nbsp;
+                <span th:class="'badge badge-' + ${booking.status.toLowerCase().replace('_','-')}"
+                      th:text="${booking.status}"></span>
+            </p>
+        </div>
+    </div>
+
+    <!-- Messages -->
+    <div class="chat-messages" id="chatMessages">
+
+        <div th:if="${messages.empty}" class="empty-chat">
+            <div style="font-size:2.5rem;">💬</div>
+            <p>No messages yet — say hello!</p>
+        </div>
+
+        <div th:each="msg : ${messages}"
+             th:class="${msg.sender.username == me} ? 'msg-bubble msg-mine' : 'msg-bubble msg-theirs'">
+            <div th:text="${msg.content}">Message content</div>
+            <div class="msg-meta">
+                <span th:text="${msg.sender.username}"></span>
+                &nbsp;·&nbsp;
+                <span th:text="${#temporals.format(msg.sentAt, 'dd MMM, hh:mm a')}"></span>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Input bar -->
+    <form class="chat-input-bar"
+          th:action="@{/chat/{id}/send(id=${booking.id})}"
+          method="post" id="chatForm">
+        <textarea name="content" id="msgInput" placeholder="Type a message…" rows="1"
+                  onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();document.getElementById('chatForm').submit();}"></textarea>
+        <button type="submit" class="btn btn-primary"
+                style="padding:.65rem 1.2rem;border-radius:22px;white-space:nowrap;">
+            Send ➤
+        </button>
+    </form>
+
+</div>
+
+<script th:src="@{/js/main.js}"></script>
+<script>
+    // Auto-scroll to latest message on load
+    const box = document.getElementById('chatMessages');
+    if (box) box.scrollTop = box.scrollHeight;
+</script>
+</body>
+</html>

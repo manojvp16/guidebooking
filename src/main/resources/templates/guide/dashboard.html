@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{fragments :: head('Guide Dashboard')}"/>
+</head>
+<body>
+<th:block th:replace="~{fragments :: navbar}"/>
+
+<div style="display:flex;min-height:calc(100vh - 68px);">
+    <aside class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-label">Guide Panel</div>
+            <ul class="sidebar-nav">
+                <li><a href="/guide/dashboard" class="active">📋 Bookings</a></li>
+                <li><a href="/guides">🔍 View Listing</a></li>
+                <li><a href="/">🏠 Home</a></li>
+            </ul>
+        </div>
+    </aside>
+
+    <main class="dashboard-main">
+
+        <!-- Pending approval notice -->
+        <div th:if="${guide.status == 'PENDING'}" class="alert alert-warning">
+            ⏳ <strong>Your guide profile is under review.</strong>
+            Our admin team will approve it within 24 hours. Tourists cannot book you until then.
+        </div>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem;flex-wrap:wrap;gap:1rem;">
+            <div>
+                <h2 style="margin:0;">Booking Requests</h2>
+                <p class="text-muted">Managing bookings for <strong th:text="${guide.name}"></strong></p>
+            </div>
+            <span class="badge badge-approved" style="font-size:.85rem;padding:.4rem 1rem;"
+                  th:text="${totalBookings} + ' Total'">0 Total</span>
+        </div>
+
+        <div class="stats-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:2rem;">
+            <div class="stat-card">
+                <div class="stat-icon teal">📋</div>
+                <div class="stat-info">
+                    <div class="num" th:text="${totalBookings}">0</div>
+                    <div class="lbl">Total</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon gold">⏳</div>
+                <div class="stat-info">
+                    <div class="num" th:text="${#lists.size(bookings.?[status == 'PENDING'])}">0</div>
+                    <div class="lbl">Pending</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon green">✅</div>
+                <div class="stat-info">
+                    <div class="num" th:text="${#lists.size(bookings.?[status == 'CONFIRMED'])}">0</div>
+                    <div class="lbl">Confirmed</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                <tr>
+                    <th>#</th><th>Tourist</th><th>Date</th><th>Status</th><th>Action</th><th>Chat</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${bookings.empty}">
+                    <td colspan="6" style="text-align:center;padding:3rem;color:var(--text-muted);">No bookings yet.</td>
+                </tr>
+                <tr th:each="booking, stat : ${bookings}">
+                    <td class="text-muted" th:text="${stat.count}">1</td>
+                    <td style="font-weight:600;" th:text="${booking.user.username}">Tourist</td>
+                    <td th:text="${booking.bookingDate}">Date</td>
+                    <td>
+                        <span th:class="'badge badge-' + ${booking.status.toLowerCase().replace('_','-')}"
+                              th:text="${booking.status}">Status</span>
+                    </td>
+                    <td>
+                        <div th:if="${booking.status == 'PENDING'}" style="display:flex;gap:.5rem;flex-wrap:wrap;">
+                            <form th:action="@{/booking/accept/{id}(id=${booking.id})}" method="post">
+                                <button type="submit" class="btn btn-primary btn-sm">✓ Accept</button>
+                            </form>
+                            <form th:action="@{/booking/reject/{id}(id=${booking.id})}" method="post">
+                                <button type="submit" class="btn btn-danger btn-sm">✗ Reject</button>
+                            </form>
+                        </div>
+                        <span th:unless="${booking.status == 'PENDING'}" class="text-muted" style="font-size:.85rem;">—</span>
+                    </td>
+                    <td>
+                        <a th:if="${booking.status != 'PENDING' and booking.status != 'REJECTED'}"
+                           th:href="@{/chat/{id}(id=${booking.id})}"
+                           class="btn btn-primary btn-sm">💬 Chat</a>
+                        <span th:unless="${booking.status != 'PENDING' and booking.status != 'REJECTED'}"
+                              style="color:var(--text-muted);font-size:.85rem;">—</span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+</div>
+
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

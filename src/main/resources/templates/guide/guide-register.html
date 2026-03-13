@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{fragments :: head('Become a Guide')}"/>
+</head>
+<body>
+<th:block th:replace="~{fragments :: navbar}"/>
+
+<div class="page-header">
+    <div class="container">
+        <h1>Become a Guide</h1>
+        <p>Share your city's magic with travelers from around the world</p>
+    </div>
+</div>
+
+<section class="section" style="padding-top:2rem;">
+    <div class="container" style="max-width:700px;">
+        <div class="form-card" style="max-width:100%;">
+            <div style="text-align:center;margin-bottom:2rem;">
+                <div style="font-size:2.5rem;">🧭</div>
+                <h2 style="margin:.5rem 0 .3rem;">Guide Registration</h2>
+                <p class="text-muted">Fill in your details. Your profile will be reviewed within 24 hours.</p>
+            </div>
+
+            <form th:action="@{/guide/register}" th:object="${guide}" method="post">
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" th:field="*{name}" placeholder="Your full name" required/>
+                    </div>
+                    <div class="form-group">
+                        <label>City</label>
+                        <input type="text" th:field="*{city}" placeholder="e.g. Mumbai, Jaipur" required/>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Languages Spoken</label>
+                        <input type="text" th:field="*{language}" placeholder="e.g. English, Hindi" required/>
+                    </div>
+                    <div class="form-group">
+                        <label>Years of Experience</label>
+                        <input type="number" th:field="*{experience}" placeholder="e.g. 5" min="0" required/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Price per Day (₹)</label>
+                    <input type="number" th:field="*{price}" placeholder="e.g. 2000" min="0" required/>
+                </div>
+                <div class="form-group">
+                    <label>Profile Image URL</label>
+                    <input type="text" th:field="*{imageUrl}" placeholder="https://… (optional)"/>
+                </div>
+                <div class="form-group">
+                    <label>About You</label>
+                    <textarea th:field="*{description}" rows="5"
+                              placeholder="Tell travelers about your expertise, specialties, and what makes your tours unique…"></textarea>
+                </div>
+
+                <div style="background:var(--ivory-dark);border-radius:var(--radius);padding:1rem;
+                    border:1px solid var(--border);margin-bottom:1.5rem;font-size:.87rem;color:var(--text-muted);">
+                    ℹ️ Your profile will be reviewed by our admin team and approved within 24 hours.
+                    You will be redirected to your guide dashboard after submitting.
+                </div>
+
+                <button type="submit" class="btn btn-gold btn-lg" style="width:100%;justify-content:center;">
+                    Submit for Approval
+                </button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<th:block th:replace="~{fragments :: footer}"/>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

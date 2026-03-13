@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <th:block th:replace="~{fragments :: head('Guide Details')}"/>
+</head>
+<body>
+<th:block th:replace="~{fragments :: navbar}"/>
+
+<div class="page-header">
+    <div class="container">
+        <p><a href="/guides" style="color:rgba(255,255,255,.7);">← Back to Guides</a></p>
+        <h1 th:text="${guide.name}">Guide Name</h1>
+    </div>
+</div>
+
+<section class="section" style="padding-top:0;">
+    <div class="container">
+
+        <div class="guide-detail-header">
+
+            <!-- Photo -->
+            <div class="guide-detail-img">
+                <img th:if="${guide.imageUrl != null and !guide.imageUrl.isEmpty()}"
+                     th:src="${guide.imageUrl}" th:alt="${guide.name}"/>
+                <div th:unless="${guide.imageUrl != null and !guide.imageUrl.isEmpty()}"
+                     class="guide-detail-img-placeholder">🧭</div>
+            </div>
+
+            <!-- Info -->
+            <div>
+                <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;margin-bottom:1rem;">
+                    <h2 th:text="${guide.name}" style="margin:0;"></h2>
+                    <span class="badge badge-approved">Verified Guide</span>
+                </div>
+
+                <!-- Star rating -->
+                <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:1rem;">
+                    <div class="stars">
+                        <th:block th:each="i : ${#numbers.sequence(1, 5)}">
+                            <span th:class="'star' + (${i <= rating} ? '' : ' empty')">★</span>
+                        </th:block>
+                    </div>
+                    <span style="font-weight:600;color:var(--teal);"
+                          th:text="${#numbers.formatDecimal(rating,1,1)}">0.0</span>
+                    <span class="text-muted">
+            (<span th:text="${reviewCount}">0</span> reviews)
+          </span>
+                </div>
+
+                <ul class="guide-meta-list">
+                    <li><span class="icon">📍</span><strong>City:</strong>&nbsp;<span th:text="${guide.city}"></span></li>
+                    <li><span class="icon">🗣️</span><strong>Language:</strong>&nbsp;<span th:text="${guide.language}"></span></li>
+                    <li><span class="icon">📅</span><strong>Experience:</strong>&nbsp;<span th:text="${guide.experience}"></span> years</li>
+                </ul>
+
+                <p style="color:var(--text-muted);font-size:.95rem;line-height:1.7;margin:1rem 0;"
+                   th:text="${guide.description}"></p>
+
+                <div class="guide-price-box">
+                    <div style="font-size:.82rem;opacity:.8;margin-bottom:.2rem;">Tour Price</div>
+                    <div class="price">₹<span th:text="${guide.price}">0</span></div>
+                    <small>per day · all inclusive</small>
+                </div>
+
+                <div style="margin-top:1.2rem;display:flex;gap:.75rem;flex-wrap:wrap;">
+                    <a sec:authorize="isAuthenticated()"
+                       th:href="@{/book/{id}(id=${guide.id})}"
+                       class="btn btn-gold btn-lg">📅 Book This Guide</a>
+                    <a sec:authorize="isAnonymous()"
+                       href="/login"
+                       class="btn btn-gold btn-lg">Login to Book</a>
+                    <a href="/guides" class="btn btn-outline">← Browse More</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reviews -->
+        <div style="margin-top:3rem;">
+            <h2 style="margin-bottom:1.5rem;">Customer Reviews</h2>
+
+            <div th:if="${reviews.empty}"
+                 style="background:var(--ivory-dark);border-radius:var(--radius);padding:2rem;text-align:center;color:var(--text-muted);">
+                <div style="font-size:2rem;margin-bottom:.5rem;">💬</div>
+                No reviews yet. Be the first to review!
+            </div>
+
+            <div th:each="review : ${reviews}" class="review-card animate">
+                <div class="review-card-header">
+                    <div>
+                        <span class="review-user" th:text="${review.user.username}">User</span>
+                        <div class="stars" style="margin-top:.3rem;">
+                            <th:block th:each="i : ${#numbers.sequence(1, 5)}">
+                <span th:class="'star' + (${i <= review.rating} ? '' : ' empty')"
+                      style="font-size:.8rem;">★</span>
+                            </th:block>
+                        </div>
+                    </div>
+                    <span class="badge badge-approved" th:text="${review.rating} + '/5'">5/5</span>
+                </div>
+                <p style="color:var(--text-muted);font-size:.9rem;margin-top:.5rem;"
+                   th:text="${review.comment}"></p>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<th:block th:replace="~{fragments :: footer}"/>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

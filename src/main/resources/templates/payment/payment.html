@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{fragments :: head('Payment')}"/>
+    <style>
+        .card-chip {
+            width: 36px; height: 28px;
+            background: linear-gradient(135deg, #d97706, #fbbf24);
+            border-radius: 6px; margin-bottom: 1rem;
+        }
+        .card-preview {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            border-radius: 16px; padding: 1.5rem;
+            color: #fff; margin-bottom: 1.5rem;
+            box-shadow: var(--shadow-md);
+            position: relative; overflow: hidden;
+        }
+        .card-preview::after {
+            content: ''; position: absolute;
+            width: 200px; height: 200px;
+            background: rgba(255,255,255,.05);
+            border-radius: 50%;
+            top: -60px; right: -60px;
+        }
+        .card-preview .card-number {
+            font-size: 1.25rem; letter-spacing: .18em;
+            font-weight: 600; margin-bottom: .8rem;
+            font-family: monospace;
+        }
+        .card-preview .card-meta {
+            display: flex; gap: 2rem; font-size: .82rem; opacity: .8;
+        }
+        .card-preview .card-meta span strong {
+            display: block; font-size: .95rem;
+            font-weight: 600; opacity: 1; color: #fff;
+        }
+    </style>
+</head>
+<body>
+<th:block th:replace="~{fragments :: navbar}"/>
+
+<div class="page-header">
+    <div class="container">
+        <h1>Complete Payment</h1>
+        <p>Secure your tour booking</p>
+    </div>
+</div>
+
+<section class="section" style="padding-top:2rem;">
+    <div class="container" style="max-width:560px;">
+        <div class="form-card" style="max-width:100%;">
+            <h3 style="margin-bottom:1.5rem;">Order Summary</h3>
+
+            <div class="payment-summary">
+                <div class="row">
+                    <span>Guide</span>
+                    <span style="font-weight:600;" th:text="${booking.guide.name}">Guide</span>
+                </div>
+                <div class="row">
+                    <span>Tour Date</span>
+                    <span th:text="${booking.bookingDate}">Date</span>
+                </div>
+                <div class="row">
+                    <span>Location</span>
+                    <span th:text="${booking.guide.city}">City</span>
+                </div>
+                <div class="row">
+                    <span>Total Amount</span>
+                    <span style="color:var(--primary);font-weight:700;">
+                        ₹<span th:text="${booking.guide.price}">0</span>
+                    </span>
+                </div>
+            </div>
+
+            <!-- Live card preview -->
+            <div class="card-preview">
+                <div class="card-chip"></div>
+                <div class="card-number" id="cardNumDisplay">4242 4242 4242 4242</div>
+                <div class="card-meta">
+                    <div><span>Card Holder</span><strong id="cardHolderDisplay">YOUR NAME</strong></div>
+                    <div><span>Expires</span><strong id="cardExpiryDisplay">12/27</strong></div>
+                    <div><span>CVV</span><strong>•••</strong></div>
+                </div>
+            </div>
+
+            <!-- Demo notice -->
+            <div style="font-size:.82rem;color:var(--text-muted);margin-bottom:1.2rem;
+                 padding:.7rem 1rem;background:var(--ivory-dark);border-radius:8px;
+                 border-left:3px solid var(--gold);">
+                🔒 Demo payment — enter the details below and click Pay. No real transaction occurs.
+            </div>
+
+            <!-- Card inputs — enabled and interactive -->
+            <div class="form-group">
+                <label>Card Number</label>
+                <input type="text" id="cardNumber" placeholder="4242 4242 4242 4242"
+                       value="4242 4242 4242 4242" maxlength="19"
+                       style="font-family:monospace;letter-spacing:.1em;font-size:1rem;"/>
+            </div>
+            <div class="form-group">
+                <label>Cardholder Name</label>
+                <input type="text" id="cardHolder" placeholder="Your Name" value="TRAVELER"/>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Expiry Date</label>
+                    <input type="text" id="cardExpiry" placeholder="MM/YY" value="12/27" maxlength="5"/>
+                </div>
+                <div class="form-group">
+                    <label>CVV</label>
+                    <input type="password" id="cardCvv" placeholder="•••" value="123" maxlength="3"/>
+                </div>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:.75rem;margin-top:.5rem;">
+                <form th:action="@{/payment/success/{id}(id=${booking.id})}" method="post">
+                    <button type="submit" class="btn btn-gold btn-lg"
+                            style="width:100%;justify-content:center;">
+                        💳 Pay ₹<span th:text="${booking.guide.price}">0</span> Now
+                    </button>
+                </form>
+                <form th:action="@{/payment/fail/{id}(id=${booking.id})}" method="post">
+                    <button type="submit" class="btn btn-outline"
+                            style="width:100%;justify-content:center;color:var(--text-muted);border-color:var(--border);">
+                        Simulate Failed Payment
+                    </button>
+                </form>
+            </div>
+
+            <p style="text-align:center;font-size:.8rem;color:var(--text-muted);margin-top:1rem;">
+                🔒 256-bit SSL encryption · Secure payment demo
+            </p>
+        </div>
+    </div>
+</section>
+
+<th:block th:replace="~{fragments :: footer}"/>
+<script th:src="@{/js/main.js}"></script>
+<script>
+    // Live card preview updates as user types
+    const numEl    = document.getElementById('cardNumber');
+    const holdEl   = document.getElementById('cardHolder');
+    const expEl    = document.getElementById('cardExpiry');
+    const numDisp  = document.getElementById('cardNumDisplay');
+    const holdDisp = document.getElementById('cardHolderDisplay');
+    const expDisp  = document.getElementById('cardExpiryDisplay');
+
+    numEl.addEventListener('input', function () {
+        let v = this.value.replace(/\D/g, '').substring(0, 16);
+        this.value = v.replace(/(\d{4})(?=\d)/g, '$1 ');
+        numDisp.textContent = this.value || '•••• •••• •••• ••••';
+    });
+
+    holdEl.addEventListener('input', function () {
+        holdDisp.textContent = this.value.toUpperCase() || 'YOUR NAME';
+    });
+
+    expEl.addEventListener('input', function () {
+        let v = this.value.replace(/\D/g, '').substring(0, 4);
+        if (v.length >= 2) v = v.substring(0, 2) + '/' + v.substring(2);
+        this.value = v;
+        expDisp.textContent = this.value || 'MM/YY';
+    });
+</script>
+</body>
+</html>

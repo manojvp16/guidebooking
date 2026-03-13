@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{fragments :: head('Admin — All Bookings')}"/>
+</head>
+<body>
+<th:block th:replace="~{fragments :: navbar}"/>
+
+<div style="display:flex;min-height:calc(100vh - 68px);">
+    <aside class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-label">Admin Panel</div>
+            <ul class="sidebar-nav">
+                <li><a href="/admin/guides">✅ Pending Guides</a></li>
+                <li><a href="/admin/bookings"  class="active">📋 All Bookings</a></li>
+                <li><a href="/admin/dashboard">📊 Dashboard</a></li>
+                <li><a href="/">🏠 Home</a></li>
+            </ul>
+        </div>
+    </aside>
+
+    <main class="dashboard-main">
+        <div style="margin-bottom:2rem;">
+            <h2 style="margin:0;">All Bookings</h2>
+            <p class="text-muted">System-wide booking overview</p>
+        </div>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                <tr>
+                    <th>#</th><th>Tourist</th><th>Guide</th>
+                    <th>City</th><th>Date</th><th>Status</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${bookings.empty}">
+                    <td colspan="6" style="text-align:center;padding:3rem;color:var(--text-muted);">
+                        No bookings in the system yet.
+                    </td>
+                </tr>
+                <tr th:each="booking, stat : ${bookings}">
+                    <td class="text-muted" th:text="${stat.count}">1</td>
+                    <td style="font-weight:600;" th:text="${booking.user.username}">Tourist</td>
+                    <td th:text="${booking.guide.name}">Guide</td>
+                    <td th:text="${booking.guide.city}">City</td>
+                    <td th:text="${booking.bookingDate}">Date</td>
+                    <td>
+              <span th:class="'badge badge-' + ${booking.status.toLowerCase().replace('_','-')}"
+                    th:text="${booking.status}">Status</span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+</div>
+
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

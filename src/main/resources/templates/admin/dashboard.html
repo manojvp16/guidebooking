@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <th:block th:replace="~{fragments :: head('Admin Dashboard')}"/>
+</head>
+<body>
+<th:block th:replace="~{fragments :: navbar}"/>
+
+<div style="display:flex;min-height:calc(100vh - 68px);">
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Admin Panel</div>
+      <ul class="sidebar-nav">
+        <li><a href="/admin/guides">✅ Pending Guides</a></li>
+        <li><a href="/admin/bookings">📋 All Bookings</a></li>
+        <li><a href="/admin/dashboard" class="active">📊 Dashboard</a></li>
+        <li><a href="/">🏠 Home</a></li>
+      </ul>
+    </div>
+  </aside>
+
+  <main class="dashboard-main">
+    <div style="margin-bottom:2rem;">
+      <h2 style="margin:0;">Admin Dashboard</h2>
+      <p class="text-muted">Platform-wide statistics overview</p>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card animate animate-delay-1">
+        <div class="stat-icon teal">🧭</div>
+        <div class="stat-info">
+          <div class="num" th:text="${totalGuides}">0</div>
+          <div class="lbl">Approved Guides</div>
+        </div>
+      </div>
+      <div class="stat-card animate animate-delay-2">
+        <div class="stat-icon gold">📋</div>
+        <div class="stat-info">
+          <div class="num" th:text="${totalBookings}">0</div>
+          <div class="lbl">Total Bookings</div>
+        </div>
+      </div>
+      <div class="stat-card animate animate-delay-3">
+        <div class="stat-icon green">✅</div>
+        <div class="stat-info">
+          <div class="num" th:text="${confirmedBookings}">0</div>
+          <div class="lbl">Confirmed</div>
+        </div>
+      </div>
+      <div class="stat-card animate animate-delay-4">
+        <div class="stat-icon purple">💰</div>
+        <div class="stat-info">
+          <div class="num">₹<span th:text="${revenue}">0</span></div>
+          <div class="lbl">Total Revenue</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:1.5rem;">
+      <a href="/admin/guides" class="card card-body" style="text-decoration:none;padding:1.5rem;">
+        <div style="font-size:2rem;margin-bottom:.5rem;">✅</div>
+        <h3 style="font-size:1rem;margin-bottom:.3rem;">Review Applications</h3>
+        <p class="text-muted" style="font-size:.85rem;">Approve or reject pending guide registrations</p>
+      </a>
+      <a href="/admin/bookings" class="card card-body" style="text-decoration:none;padding:1.5rem;">
+        <div style="font-size:2rem;margin-bottom:.5rem;">📋</div>
+        <h3 style="font-size:1rem;margin-bottom:.3rem;">View All Bookings</h3>
+        <p class="text-muted" style="font-size:.85rem;">Monitor all booking activity on the platform</p>
+      </a>
+    </div>
+  </main>
+</div>
+
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

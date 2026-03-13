@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{fragments :: head('Register')}"/>
+</head>
+<body>
+<div class="auth-page">
+
+    <div class="auth-left">
+        <div>
+            <a href="/" style="font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;color:#fff;text-decoration:none;">
+                🧭 Guide<span style="color:#fbbf24;">Book</span>
+            </a>
+            <h2 style="margin-top:2.5rem;">Join Our Community</h2>
+            <p style="margin-top:.8rem;">Sign up as a traveler to book guides, or register as a guide to share your expertise with the world.</p>
+            <div style="margin-top:3rem;background:rgba(255,255,255,.08);border-radius:16px;padding:1.5rem;">
+                <p style="color:rgba(255,255,255,.8);font-size:.9rem;font-style:italic;">
+                    "GuideBook changed how I travel. My local guide showed me places no travel blog would ever mention."
+                </p>
+                <p style="color:#fbbf24;font-size:.83rem;margin-top:.8rem;font-weight:600;">— Priya M., Traveler</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="auth-right">
+        <div class="auth-form-wrap">
+            <h2 style="margin-bottom:.4rem;">Create Account</h2>
+            <p class="text-muted" style="margin-bottom:2rem;">Start your journey with GuideBook</p>
+
+            <form th:action="@{/register}" method="post" th:object="${user}">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" th:field="*{username}" placeholder="Choose a username" required/>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" th:field="*{email}" placeholder="your@email.com" required/>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" th:field="*{password}" placeholder="Create a strong password" required/>
+                </div>
+                <div class="form-group">
+                    <label for="role">I want to…</label>
+                    <select id="role" th:field="*{role}">
+                        <option value="CUSTOMER">Book tours as a Traveler</option>
+                        <option value="GUIDE">Offer tours as a Guide</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary"
+                        style="width:100%;justify-content:center;padding:.8rem;font-size:1rem;">
+                    Create Account
+                </button>
+            </form>
+
+            <p style="text-align:center;margin-top:1.5rem;font-size:.9rem;color:var(--text-muted);">
+                Already have an account? <a href="/login" style="color:var(--primary);font-weight:600;">Sign in</a>
+            </p>
+        </div>
+    </div>
+</div>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

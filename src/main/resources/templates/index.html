@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <th:block th:replace="~{fragments :: head('Home')}"/>
+</head>
+<body>
+
+<th:block th:replace="~{fragments :: navbar}"/>
+
+<!-- HERO -->
+<section class="hero">
+    <div class="container hero-content">
+        <div class="hero-eyebrow">✈ Authentic Local Experiences</div>
+        <h1>Find Your Perfect <em>Local Guide</em></h1>
+        <p>Connect with expert local guides who bring destinations alive with stories, culture, and hidden gems.</p>
+
+        <form class="hero-search-bar" action="/guides/search" method="get">
+            <input type="text" name="city" placeholder="Where do you want to explore?"/>
+            <button type="submit">Search Guides</button>
+        </form>
+
+        <div class="hero-stats">
+            <div class="hero-stat"><div class="num">500+</div><div class="lbl">Expert Guides</div></div>
+            <div class="hero-stat"><div class="num">80+</div><div class="lbl">Cities Covered</div></div>
+            <div class="hero-stat"><div class="num">10k+</div><div class="lbl">Happy Travelers</div></div>
+        </div>
+    </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section" style="background:var(--ivory-dark);">
+    <div class="container">
+        <div class="section-heading">
+            <h2>How It Works</h2>
+            <p class="subtitle">Book your perfect guide in three simple steps</p>
+            <div class="divider"></div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:2rem;">
+            <div class="card card-body animate animate-delay-1" style="text-align:center;padding:2rem;">
+                <div style="font-size:2.5rem;margin-bottom:1rem;">🔍</div>
+                <h3 style="font-size:1.1rem;margin-bottom:.5rem;">1. Search</h3>
+                <p class="card-text">Browse guides by city, language, or specialty to find your perfect match.</p>
+            </div>
+            <div class="card card-body animate animate-delay-2" style="text-align:center;padding:2rem;">
+                <div style="font-size:2.5rem;margin-bottom:1rem;">📅</div>
+                <h3 style="font-size:1.1rem;margin-bottom:.5rem;">2. Book</h3>
+                <p class="card-text">Select your date, confirm your booking, and wait for guide acceptance.</p>
+            </div>
+            <div class="card card-body animate animate-delay-3" style="text-align:center;padding:2rem;">
+                <div style="font-size:2.5rem;margin-bottom:1rem;">🗺️</div>
+                <h3 style="font-size:1.1rem;margin-bottom:.5rem;">3. Explore</h3>
+                <p class="card-text">Meet your guide, pay securely, and enjoy an unforgettable experience.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="section">
+    <div class="container" style="text-align:center;">
+        <div class="section-heading">
+            <h2>Ready to Explore?</h2>
+            <p class="subtitle">Discover hundreds of expert guides waiting to show you their world.</p>
+            <div class="divider"></div>
+        </div>
+        <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-top:2rem;">
+            <a href="/guides"         class="btn btn-primary btn-lg">Browse All Guides</a>
+            <a href="/guide/register" class="btn btn-outline  btn-lg">Become a Guide</a>
+        </div>
+    </div>
+</section>
+
+<th:block th:replace="~{fragments :: footer}"/>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

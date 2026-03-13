@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{fragments :: head('Browse Guides')}"/>
+</head>
+<body>
+<th:block th:replace="~{fragments :: navbar}"/>
+
+<div class="page-header">
+    <div class="container">
+        <h1>Browse Guides</h1>
+        <p>Discover expert local guides ready to show you the world</p>
+    </div>
+</div>
+
+<section class="section" style="padding-top:0;">
+    <div class="container">
+
+        <!-- Search + actions bar -->
+        <div style="background:var(--white);border-radius:var(--radius-lg);padding:1.2rem 1.5rem;
+                box-shadow:var(--shadow-sm);border:1px solid var(--border);
+                margin-bottom:2rem;display:flex;gap:1rem;align-items:center;flex-wrap:wrap;">
+            <form action="/guides/search" method="get" style="display:flex;gap:.75rem;flex:1;flex-wrap:wrap;">
+                <input type="text" name="city" placeholder="🔍 Search by city…" style="flex:1;min-width:200px;"/>
+                <button type="submit" class="btn btn-primary">Search</button>
+            </form>
+            <a href="/guides"         class="btn btn-outline btn-sm">Clear</a>
+            <a href="/guide/register" class="btn btn-gold    btn-sm">+ Become a Guide</a>
+        </div>
+
+        <!-- Empty state -->
+        <div th:if="${guides.empty}" style="text-align:center;padding:4rem 0;">
+            <div style="font-size:3rem;margin-bottom:1rem;">🔭</div>
+            <h3 style="color:var(--text-muted);">No guides found</h3>
+            <p style="color:var(--text-muted);">Try searching for a different city.</p>
+        </div>
+
+        <!-- Guide grid -->
+        <div class="guide-grid" th:unless="${guides.empty}">
+            <div class="card guide-card animate"
+                 th:each="guide, stat : ${guides}"
+                 th:style="'animation-delay:' + ${stat.index * 0.07} + 's'">
+
+                <div class="guide-card-img">
+                    <img th:src="${guide.imageUrl}" th:alt="${guide.name}"
+                         onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+                    <div style="display:none;width:100%;height:100%;background:linear-gradient(135deg,#0d5c63,#1a7a82);
+                      align-items:center;justify-content:center;font-size:4rem;">🧭</div>
+                    <span class="guide-card-badge" th:text="${guide.experience} + ' yrs exp'"></span>
+                </div>
+
+                <div class="guide-card-body">
+                    <h3 class="guide-card-name" th:text="${guide.name}">Guide Name</h3>
+                    <div class="guide-card-meta">
+                        <span>📍 <span th:text="${guide.city}">City</span></span>
+                        <span>🗣️ <span th:text="${guide.language}">Lang</span></span>
+                    </div>
+                    <p class="card-text"
+                       style="font-size:.85rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;"
+                       th:text="${guide.description}">Description…</p>
+                    <div class="guide-card-price">
+                        ₹<span th:text="${guide.price}">0</span>
+                        <small>/day</small>
+                    </div>
+                    <a th:href="@{/guide/{id}(id=${guide.id})}"
+                       class="btn btn-primary" style="width:100%;justify-content:center;">
+                        View Details
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination" th:if="${totalPages > 1}">
+            <a th:href="@{/guides(page=${currentPage - 1})}"
+               class="page-btn"
+               th:style="${currentPage == 0} ? 'pointer-events:none;opacity:.4;' : ''">‹</a>
+
+            <a th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+               th:href="@{/guides(page=${i})}"
+               th:text="${i + 1}"
+               th:class="'page-btn' + (${i == currentPage} ? ' active' : '')"></a>
+
+            <a th:href="@{/guides(page=${currentPage + 1})}"
+               class="page-btn"
+               th:style="${currentPage == totalPages - 1} ? 'pointer-events:none;opacity:.4;' : ''">›</a>
+        </div>
+
+    </div>
+</section>
+
+<th:block th:replace="~{fragments :: footer}"/>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

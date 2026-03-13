@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+
+<th:block th:fragment="head(title)">
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title th:text="${title} + ' — GuideBook'">GuideBook</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧭</text></svg>"/>
+</th:block>
+
+<!-- NAVBAR — search bar removed (was duplicating the hero search) -->
+<nav th:fragment="navbar" class="navbar">
+    <div class="container navbar-inner">
+        <a href="/" class="navbar-brand">🧭 Guide<span>Book</span></a>
+
+        <ul class="navbar-nav">
+            <li><a href="/"       class="nav-link">Home</a></li>
+            <li><a href="/guides" class="nav-link">Guides</a></li>
+            <li sec:authorize="isAuthenticated()">
+                <a href="/my-bookings" class="nav-link">My Bookings</a>
+            </li>
+            <li sec:authorize="hasRole('GUIDE')">
+                <a href="/guide/dashboard" class="nav-link">Dashboard</a>
+            </li>
+            <li sec:authorize="hasRole('ADMIN')">
+                <a href="/admin/dashboard" class="nav-link">Admin</a>
+            </li>
+        </ul>
+
+        <div class="navbar-actions">
+            <span sec:authorize="isAnonymous()">
+                <a href="/login"    class="btn btn-outline btn-sm"
+                   style="color:#fff;border-color:rgba(255,255,255,.5);">Login</a>
+                <a href="/register" class="btn btn-gold btn-sm">Register</a>
+            </span>
+            <span sec:authorize="isAuthenticated()">
+                <span style="color:rgba(255,255,255,.7);font-size:.87rem;margin-right:.5rem;"
+                      sec:authentication="name"></span>
+                <form action="/logout" method="post" style="display:inline;">
+                    <button type="submit" class="btn btn-sm"
+                            style="background:rgba(255,255,255,.12);color:#fff;border-color:transparent;">
+                        Logout
+                    </button>
+                </form>
+            </span>
+        </div>
+
+        <button class="hamburger" aria-label="Menu">☰</button>
+    </div>
+</nav>
+
+<footer th:fragment="footer" class="footer">
+    <div class="container">
+        <div class="footer-grid">
+            <div>
+                <div class="footer-brand">🧭 Guide<span>Book</span></div>
+                <p style="font-size:.88rem;max-width:280px;">
+                    Connecting travelers with expert local guides for unforgettable authentic experiences.
+                </p>
+            </div>
+            <div>
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/guides">Browse Guides</a></li>
+                    <li><a href="/guide/register">Become a Guide</a></li>
+                    <li><a href="/register">Sign Up</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4>Support</h4>
+                <ul>
+                    <li><a href="#">Help Center</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2025 GuideBook. All rights reserved. Made with ❤️ for travelers.</p>
+        </div>
+    </div>
+</footer>
+
+</body>
+</html>
