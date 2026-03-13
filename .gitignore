@@ -31,18 +31,15 @@ build/
 
 ### VS Code ###
 .vscode/
-target/
 *.class
 *.jar
 *.war
-.idea/
-*.iml
-.vscode/
 .DS_Store
 Thumbs.db
 *.log
 logs/
 .env
-application-prod.properties
+
+### Local credentials — never commit these ###
 application-local.properties
-application.properties
+application-prod.properties
